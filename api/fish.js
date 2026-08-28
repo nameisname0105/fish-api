@@ -1,8 +1,20 @@
 const mysql = require('mysql2/promise');
 
 export default async function handler(req, res) {
-  // CORS 허용 (어느 컴퓨터에서 열어도 데이터가 오도록 설정)
+  // CORS 헤더 설정 (어느 컴퓨터/로컬 파일에서 열어도 접속 허용)
+  res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  );
+
+  // 브라우저 사전 요청(OPTIONS) 처리
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
 
   try {
     const connection = await mysql.createConnection({
